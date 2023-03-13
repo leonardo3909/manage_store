@@ -95,6 +95,7 @@ public class SaleController {
             return new ResponseEntity<>(new ResponseDTO(200, saleService.getTotalSales()/(float)storeService.getStores().size(), null),HttpStatus.OK);
         }
         return new ResponseEntity<>(new ResponseDTO(409,"no hay ventas, no se puede obtener promedio",null),HttpStatus.BAD_REQUEST);
+        //Este es el getmapping para tener el promedio de ventas de las tiendas.
 
 
 
