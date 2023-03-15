@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -31,6 +33,7 @@ public class SaleController {
 
     @GetMapping
     public ResponseEntity<ResponseDTO> getSales(){
+
         return new ResponseEntity<>(
                 new ResponseDTO(200,
                         saleService.getSales(),
@@ -92,9 +95,11 @@ public class SaleController {
     public ResponseEntity<ResponseDTO> getAverageSalesByStore(){
         int finSale = saleService.getTotalSales();
         while (finSale !=0){
-            return new ResponseEntity<>(new ResponseDTO(200, saleService.getTotalSales()/(float)storeService.getStores().size(), null),HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDTO(200,
+                    saleService.getTotalSales()/(float)storeService.getStores().size(), null),HttpStatus.OK);
         }
-        return new ResponseEntity<>(new ResponseDTO(409,"no hay ventas, no se puede obtener promedio",null),HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ResponseDTO(409,
+                "no hay ventas, no se puede obtener promedio",null),HttpStatus.BAD_REQUEST);
         //Este es el getmapping para tener el promedio de ventas de las tiendas.
 
 
@@ -105,13 +110,28 @@ public class SaleController {
     public ResponseEntity<ResponseDTO> getAverageSalesBySellers(){
         int finSale = saleService.getTotalSales();
         while (finSale !=0){
-            return new ResponseEntity<>(new ResponseDTO(200, saleService.getTotalSales()/(float)sellerService.getSellers().size(), null),HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDTO(200,
+                    saleService.getTotalSales()/(float)sellerService.getSellers().size(), null),HttpStatus.OK);
         }
-        return new ResponseEntity<>(new ResponseDTO(409,"no hay ventas, no se puede obtener promedio",null),HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ResponseDTO(409,
+                "no hay ventas, no se puede obtener promedio",null),HttpStatus.BAD_REQUEST);
 
 
 
     }
+
+    @GetMapping("/salesbysellerbyquantity/{quantity}")
+
+    public ResponseEntity<ResponseDTO> getSalesByStoreByQuantity(@PathVariable int quantity){
+        List<Seller> storeL = new ArrayList<>();
+        for (Sale i : saleService.getSales()){
+            if (saleService.getTotalSalesBySeller(i.getSeller().getCode())> quantity){
+                storeL.add(i.getSeller());
+            }
+        }
+        return new ResponseEntity<>(new ResponseDTO(200,storeL,null),HttpStatus.OK);
+    }
+
 
 
 
